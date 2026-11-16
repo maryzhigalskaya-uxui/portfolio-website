@@ -292,7 +292,7 @@ function renderProjectsAccordion() {
                                         <img
                                             src="${project.image}"
                                             alt="${project.name}"
-                                            loading="${index === 0 ? "eager" : "lazy"}"
+                                            loading="lazy"
                                             decoding="async"
                                         >
                                     </div>
@@ -799,6 +799,11 @@ document.fonts.ready.then(() => {
             };
         }
     );
+    document.fonts.ready.then(
+    () => {
+        ScrollTrigger.refresh();
+    }
+    );
 });
 const graphicTrack =
     document.querySelector(".graphic-track");
@@ -850,8 +855,7 @@ function startGraphicMarquee() {
             }
         );
 }
-window.addEventListener(
-    "load",
+requestAnimationFrame(
     startGraphicMarquee
 );
 let graphicResizeTimer;
@@ -1340,8 +1344,7 @@ function initPageEntrance() {
         }
     );
 }
-window.addEventListener(
-    "load",
+requestAnimationFrame(
     initPageEntrance
 );
 gsap.from(
