@@ -14,6 +14,8 @@ gsap.ticker.add((time) => {
     lenis.raf(time * 1000);
 });
 gsap.ticker.lagSmoothing(0);
+const isTouchDevice =
+    navigator.maxTouchPoints > 0;
 const aboutSection = document.querySelector(".about-scroll");
 const lines = gsap.utils.toArray(".about-line");
 const WORD_STEP = 0.17;
@@ -123,53 +125,54 @@ document.fonts.ready.then(() => {
 let resizeTimer;
 let lastAboutWidth =
     window.innerWidth;
-let lastAboutOrientation =
+const aboutOrientationQuery =
     window.matchMedia(
         "(orientation: portrait)"
-    ).matches;
-window.addEventListener(
-    "resize",
-    () => {
-        const currentWidth =
-            window.innerWidth;
-        const currentOrientation =
-            window.matchMedia(
-                "(orientation: portrait)"
-            ).matches;
-        const widthChanged =
-            Math.abs(
-                currentWidth -
-                lastAboutWidth
-            ) > 4;
-        const orientationChanged =
-            currentOrientation !==
-            lastAboutOrientation;
-            if (
-            !widthChanged &&
-            !orientationChanged
-        ) {
-            return;
-        }
-        lastAboutWidth =
-            currentWidth;
-        lastAboutOrientation =
-            currentOrientation;
-        clearTimeout(
-            resizeTimer
+    );
+function scheduleAboutRebuild() {
+    clearTimeout(
+        resizeTimer
+    );
+    resizeTimer =
+        setTimeout(
+            () => {
+                createAboutAnimation();
+                ScrollTrigger.refresh();
+            },
+            280
         );
-        resizeTimer =
-            setTimeout(
-                () => {
-                    createAboutAnimation();
-                    ScrollTrigger.refresh();
-                },
-                250
-            );
-    },
-    {
-        passive: true
-    }
-);
+}
+if (isTouchDevice) {
+     aboutOrientationQuery
+        .addEventListener(
+            "change",
+            scheduleAboutRebuild
+        );
+} else {
+    window.addEventListener(
+        "resize",
+        () => {
+            const currentWidth =
+                window.innerWidth;
+
+            const widthChanged =
+                Math.abs(
+                    currentWidth -
+                    lastAboutWidth
+                ) > 4;
+            if (!widthChanged) {
+                return;
+            }
+            lastAboutWidth =
+                currentWidth;
+
+            scheduleAboutRebuild();
+        },
+        {
+            passive: true
+        }
+    );
+}
 const projects = [
     {
         name: "NataWest",
@@ -919,8 +922,11 @@ if (
     promptsMedia.add(
     "(min-width: 700px) and (max-width: 1366px) " +
     "and (hover: none) and (pointer: coarse) " +
-    "and (min-height: 501px)",
+    "and (orientation: portrait)",
     () => {
+
+        const travel =
+            window.innerHeight * 1.35;
         const promptsTimeline =
             gsap.timeline({
                 scrollTrigger: {
@@ -931,17 +937,16 @@ if (
                     end:
                         "bottom bottom",
                     scrub:
-                        0.3,
+                        true,
                     invalidateOnRefresh:
-                        true
+                        false
                 }
             });
         promptsTimeline.to(
             promptArts,
             {
-                y: () =>
-                    -window.innerHeight
-                    * 1.35,
+                y:
+                    -travel,
                 force3D:
                     true,
                 ease:
@@ -967,6 +972,59 @@ if (
         };
     }
 );
+promptsMedia.add(
+    "(min-width: 700px) and (max-width: 1366px) " +
+    "and (hover: none) and (pointer: coarse) " +
+    "and (orientation: landscape)",
+    () => {
+        const travel =
+            window.innerHeight * 1.35;
+        const promptsTimeline =
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger:
+                        promptsSection,
+                    start:
+                        "top top",
+                    end:
+                        "bottom bottom",
+                    scrub:
+                        true,
+                    invalidateOnRefresh:
+                        false
+                }
+            });
+        promptsTimeline.to(
+            promptArts,
+            {
+                y:
+                    -travel,
+                force3D:
+                    true,
+                ease:
+                    "none",
+                duration:
+                    1
+            },
+            0
+        );
+        return () => {
+            promptsTimeline
+                .scrollTrigger
+                ?.kill();
+            promptsTimeline
+                .kill();
+            gsap.set(
+                promptArts,
+                {
+                    clearProps:
+                        "transform"
+                }
+            );
+        };
+    }
+);
+};
      promptsMedia.add(
         "(max-width: 699px) and (orientation: portrait)",
         () => {
@@ -980,7 +1038,7 @@ if (
                         end:
                             "bottom bottom",
                         scrub:
-                            0.25,
+                            true,
                         invalidateOnRefresh:
                             true
                     }
@@ -1063,7 +1121,6 @@ if (
         };
     }
 );
-}
 const swapLinks =
     document.querySelectorAll(
         ".swap-link"
@@ -1424,6 +1481,15 @@ function setMobileMenu(open) {
   ) {
     return;
   }
+  const currentlyOpen =
+    burgerButton.classList.contains(
+        "is-open"
+    );
+if (
+    currentlyOpen === open
+) {
+    return;
+}
   burgerButton.classList.toggle(
     "is-open",
     open
@@ -1463,10 +1529,17 @@ if (
     "resize",
     () => {
       if (
-        window.innerWidth > 860
+        window.innerWidth > 860 &&
+        burgerButton.classList.contains(
+          "is-open"
+        )
       ) {
         setMobileMenu(false);
       }
+
+    },
+    {
+      passive: true
     }
-  );
+);
 }
