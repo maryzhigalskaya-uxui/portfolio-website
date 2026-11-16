@@ -799,17 +799,52 @@ requestAnimationFrame(
     startGraphicMarquee
 );
 let graphicResizeTimer;
+let lastGraphicWidth =
+    window.innerWidth;
+let lastGraphicOrientation =
+    window.matchMedia(
+        "(orientation: portrait)"
+    ).matches;
 window.addEventListener(
     "resize",
     () => {
+        const currentWidth =
+            window.innerWidth;
+
+        const currentOrientation =
+            window.matchMedia(
+                "(orientation: portrait)"
+            ).matches;
+        const widthChanged =
+            Math.abs(
+                currentWidth -
+                lastGraphicWidth
+            ) > 4;
+        const orientationChanged =
+            currentOrientation !==
+            lastGraphicOrientation;
+            if (
+            !widthChanged &&
+            !orientationChanged
+        ) {
+            return;
+        }
+        lastGraphicWidth =
+            currentWidth;
+
+        lastGraphicOrientation =
+            currentOrientation;
         clearTimeout(
             graphicResizeTimer
         );
         graphicResizeTimer =
             setTimeout(
                 startGraphicMarquee,
-                200
+                250
             );
+    },
+    {
+        passive: true
     }
 );
 const promptsSection =
