@@ -292,7 +292,6 @@ function renderProjectsAccordion() {
                                         <img
                                             src="${project.image}"
                                             alt="${project.name}"
-                                            loading="lazy"
                                             decoding="async"
                                         >
                                     </div>
@@ -370,70 +369,11 @@ function renderProjectsAccordion() {
             )
             .join("");
 }
-let projectImagesObserver;
-function preloadAccordionImages() {
-    if (!projectsAccordion) {
-        return;
-    }
-    const images =
-        projectsAccordion
-            .querySelectorAll(
-                ".project-accordion-image img"
-            );
-    images.forEach(
-        (img) => {
-            img.loading =
-                "eager";
-            if (
-                typeof img.decode ===
-                "function"
-            ) {
-                img.decode()
-                    .catch(
-                        () => {}
-                    );
-            }
-        }
-    );
-}
-function observeProjectImages() {
-    if (
-        !projectsAccordion ||
-        !section
-    ) {
-        return;
-    }
-    projectImagesObserver
-        ?.disconnect();
-    projectImagesObserver =
-        new IntersectionObserver(
-            (entries) => {
-                if (
-                    !entries[0]
-                        ?.isIntersecting
-                ) {
-                    return;
-                }
-                preloadAccordionImages();
-                projectImagesObserver
-                    .disconnect();
-            },
-            {
-                rootMargin:
-                    "900px 0px"
-            }
-        );
-    projectImagesObserver
-        .observe(
-            section
-        );
-}
 function initProjectsAccordion() {
     if (!projectsAccordion) {
         return;
     }
     renderProjectsAccordion();
-    observeProjectImages();
     const items =
         gsap.utils.toArray(
             ".project-accordion-item",
