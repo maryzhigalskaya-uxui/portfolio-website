@@ -1,4 +1,7 @@
 gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({
+    ignoreMobileResize: true
+});
 const lenis = new Lenis({
     lerp: 0.08,
     smoothWheel: true,
@@ -118,13 +121,55 @@ document.fonts.ready.then(() => {
     ScrollTrigger.refresh();
 });
 let resizeTimer;
-window.addEventListener("resize", () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-        createAboutAnimation();
-        ScrollTrigger.refresh();
-    }, 250);
-});
+let lastAboutWidth =
+    window.innerWidth;
+let lastAboutOrientation =
+    window.matchMedia(
+        "(orientation: portrait)"
+    ).matches;
+window.addEventListener(
+    "resize",
+    () => {
+        const currentWidth =
+            window.innerWidth;
+        const currentOrientation =
+            window.matchMedia(
+                "(orientation: portrait)"
+            ).matches;
+        const widthChanged =
+            Math.abs(
+                currentWidth -
+                lastAboutWidth
+            ) > 4;
+        const orientationChanged =
+            currentOrientation !==
+            lastAboutOrientation;
+            if (
+            !widthChanged &&
+            !orientationChanged
+        ) {
+            return;
+        }
+        lastAboutWidth =
+            currentWidth;
+        lastAboutOrientation =
+            currentOrientation;
+        clearTimeout(
+            resizeTimer
+        );
+        resizeTimer =
+            setTimeout(
+                () => {
+                    createAboutAnimation();
+                    ScrollTrigger.refresh();
+                },
+                250
+            );
+    },
+    {
+        passive: true
+    }
+);
 const projects = [
     {
         name: "NataWest",
