@@ -2429,8 +2429,8 @@ body {
   }
   .prompts-scroll {
     width: 100%;
-    height: 150vh;
-    height: 150svh;
+    height: 260vh;
+    height: 260svh;
     margin-top: 80px;
     background: #0A0A0A;
   }

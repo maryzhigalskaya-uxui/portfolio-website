@@ -1001,7 +1001,7 @@ if (
                         end:
                             "bottom bottom",
                         scrub:
-                            0.3,
+                            0.25,
                         invalidateOnRefresh:
                             true
                     }
