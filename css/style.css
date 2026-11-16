@@ -800,6 +800,9 @@ body {
   max-width: none;
   display: block;
   will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
 }
 .prompt-art-rose {
   left: 23vw;
@@ -1322,7 +1325,12 @@ body {
   }
 }
 
-@media (min-width: 700px) and (max-width: 860px) {
+@media (min-width: 700px) and (max-width: 860px),
+  (min-width: 951px)
+  and (max-width: 1366px)
+  and (orientation: landscape)
+  and (hover: none)
+  and (pointer: coarse) {
   .header .container {
     display: flex;
     justify-content: flex-end;

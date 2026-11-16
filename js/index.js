@@ -292,7 +292,7 @@ function renderProjectsAccordion() {
                                         <img
                                             src="${project.image}"
                                             alt="${project.name}"
-                                            loading="lazy"
+                                            loading="${index === 0 ? "eager" : "lazy"}"
                                             decoding="async"
                                         >
                                     </div>
@@ -370,11 +370,70 @@ function renderProjectsAccordion() {
             )
             .join("");
 }
+let projectImagesObserver;
+function preloadAccordionImages() {
+    if (!projectsAccordion) {
+        return;
+    }
+    const images =
+        projectsAccordion
+            .querySelectorAll(
+                ".project-accordion-image img"
+            );
+    images.forEach(
+        (img) => {
+            img.loading =
+                "eager";
+            if (
+                typeof img.decode ===
+                "function"
+            ) {
+                img.decode()
+                    .catch(
+                        () => {}
+                    );
+            }
+        }
+    );
+}
+function observeProjectImages() {
+    if (
+        !projectsAccordion ||
+        !section
+    ) {
+        return;
+    }
+    projectImagesObserver
+        ?.disconnect();
+    projectImagesObserver =
+        new IntersectionObserver(
+            (entries) => {
+                if (
+                    !entries[0]
+                        ?.isIntersecting
+                ) {
+                    return;
+                }
+                preloadAccordionImages();
+                projectImagesObserver
+                    .disconnect();
+            },
+            {
+                rootMargin:
+                    "900px 0px"
+            }
+        );
+    projectImagesObserver
+        .observe(
+            section
+        );
+}
 function initProjectsAccordion() {
     if (!projectsAccordion) {
         return;
     }
     renderProjectsAccordion();
+    observeProjectImages();
     const items =
         gsap.utils.toArray(
             ".project-accordion-item",
@@ -463,7 +522,7 @@ function initProjectsAccordion() {
                         gsap.timeline({
                             defaults: {
                                 ease:
-                                    "power3.inOut"
+                                    "power2.inOut"
                             }
                         });
                     if (currentPanel) {
@@ -472,7 +531,7 @@ function initProjectsAccordion() {
                             {
                                 height: 0,
                                 opacity: 0,
-                                duration: 0.4
+                                duration: 0.3
                             },
                             0
                         );
@@ -486,7 +545,7 @@ function initProjectsAccordion() {
                         {
                             height: "auto",
                             opacity: 1,
-                            duration: 0.6,
+                            duration: 0.45,
                             onComplete: () => {
                                 ScrollTrigger.refresh();
                             }
@@ -605,7 +664,8 @@ const projectsMedia =
     gsap.matchMedia();
 document.fonts.ready.then(() => {
     projectsMedia.add(
-        "(min-width: 861px) and (min-height: 501px), (min-width: 951px)",
+        "(min-width: 861px) and (hover: hover) and (pointer: fine), " +
+    "(min-width: 1367px)",
         () => {
             currentIndex = 0;
             setProjectData(0);
@@ -717,8 +777,11 @@ document.fonts.ready.then(() => {
     );
      projectsMedia.add(
         "(min-width: 700px) and (max-width: 860px), " +
-        "(max-width: 699px) and (orientation: portrait), " +
-        "(orientation: landscape) and (max-height: 500px) and (max-width: 950px)",
+    "(max-width: 699px) and (orientation: portrait), " +
+    "(orientation: landscape) and (max-height: 500px) and (max-width: 950px), " +
+    "(min-width: 951px) and (max-width: 1366px) " +
+    "and (orientation: landscape) " +
+    "and (hover: none) and (pointer: coarse)",
         () => {
             initProjectsAccordion();
             requestAnimationFrame(
@@ -820,7 +883,8 @@ if (
     promptArts.length
 ) {
      promptsMedia.add(
-        "(min-width: 700px) and (min-height: 501px), (min-width: 951px)",
+        "(min-width: 861px) and (hover: hover) and (pointer: fine), " +
+    "(min-width: 1367px)",
         () => {
             const promptsTimeline =
                 gsap.timeline({
@@ -873,6 +937,57 @@ if (
             };
         }
     );
+    promptsMedia.add(
+    "(min-width: 700px) and (max-width: 1366px) " +
+    "and (hover: none) and (pointer: coarse) " +
+    "and (min-height: 501px)",
+    () => {
+        const promptsTimeline =
+            gsap.timeline({
+                scrollTrigger: {
+                    trigger:
+                        promptsSection,
+                    start:
+                        "top top",
+                    end:
+                        "bottom bottom",
+                    scrub:
+                        0.3,
+                    invalidateOnRefresh:
+                        true
+                }
+            });
+        promptsTimeline.to(
+            promptArts,
+            {
+                y: () =>
+                    -window.innerHeight
+                    * 1.35,
+                force3D:
+                    true,
+                ease:
+                    "none",
+                duration:
+                    1
+            },
+            0
+        );
+        return () => {
+            promptsTimeline
+                .scrollTrigger
+                ?.kill();
+            promptsTimeline
+                .kill();
+            gsap.set(
+                promptArts,
+                {
+                    clearProps:
+                        "transform"
+                }
+            );
+        };
+    }
+);
      promptsMedia.add(
         "(max-width: 699px) and (orientation: portrait)",
         () => {
@@ -886,7 +1001,7 @@ if (
                         end:
                             "bottom bottom",
                         scrub:
-                            0.65,
+                            0.3,
                         invalidateOnRefresh:
                             true
                     }
@@ -897,6 +1012,7 @@ if (
                     y: () =>
                         -window.innerHeight
                         * 1.05,
+                    force3D: true,
                     ease:
                         "none",
                     duration:
@@ -933,7 +1049,7 @@ if (
                     end:
                         "bottom bottom",
                     scrub:
-                        0.65,
+                        0.3,
                     invalidateOnRefresh:
                         true
                 }
@@ -944,6 +1060,7 @@ if (
                 y: () =>
                     -window.innerHeight
                     * 1.65,
+                force3D: true,
                 ease:
                     "none",
                 duration:
