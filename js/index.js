@@ -502,13 +502,7 @@ function initProjectsAccordion() {
 }
 function setProjectData(index) {
     const project = projects[index];
-    projectImages.forEach((img, i) => {
-        if (i === index) {
-            img.classList.add("active");
-        } else {
-            img.classList.remove("active");
-        }
-    });
+    transitionProjectImage(index);
     overview.textContent =
         project.overview;
     tags.innerHTML =
@@ -542,6 +536,36 @@ function setProjectData(index) {
             projectLink.classList.add("is-disabled");
             projectLink.setAttribute("aria-disabled", "true");
         }
+        gsap.killTweensOf(
+    [
+        overview,
+        tags,
+        industry,
+        client,
+        projectLink
+    ]
+);
+gsap.fromTo(
+    [
+        overview,
+        tags,
+        industry,
+        client,
+        projectLink
+    ],
+    {
+        opacity: 0.35
+    },
+    {
+        opacity: 1,
+        duration: 0.32,
+        stagger: 0.018,
+        ease:
+            "power2.out",
+        overwrite:
+            true
+    }
+);
 }
 gsap.registerPlugin(ScrollTrigger);
 const section = document.querySelector(".projects-scroll");
@@ -562,6 +586,145 @@ const projectLink = document.querySelector(".project-link");
 const projectRight = document.querySelector(".project-right");
 const projectList = document.querySelector("#projectList");
 let currentIndex = 0;
+let visibleProjectImageIndex = 0;
+let projectImageTransition = null;
+function transitionProjectImage(index) {
+    if (
+        index ===
+        visibleProjectImageIndex
+    ) {
+        return;
+    }
+    const nextImage =
+        projectImages[index];
+    const currentImage =
+        projectImages[
+            visibleProjectImageIndex
+        ];
+    if (!nextImage) {
+        return;
+    }
+    if (projectImageTransition) {
+        projectImageTransition.kill();
+        projectImageTransition = null;
+    }
+    gsap.killTweensOf(
+        projectImages
+    );
+    projectImages.forEach(
+        (image, imageIndex) => {
+            if (
+                imageIndex !==
+                    visibleProjectImageIndex &&
+                imageIndex !== index
+            ) {
+                image.classList.remove(
+                    "active"
+                );
+                gsap.set(
+                    image,
+                    {
+                        autoAlpha: 0,
+                        scale: 1.012,
+                        zIndex: 1
+                    }
+                );
+            }
+        }
+    );
+    nextImage.classList.add(
+        "active"
+    );
+    gsap.set(
+        nextImage,
+        {
+            autoAlpha: 0,
+            scale: 1.012,
+            zIndex: 3
+        }
+    );
+    if (currentImage) {
+        currentImage.classList.add(
+            "active"
+        );
+        gsap.set(
+            currentImage,
+            {
+                visibility:
+                    "visible",
+                zIndex: 2
+            }
+        );
+    }
+    projectImageTransition =
+        gsap.timeline({
+            defaults: {
+                overwrite:
+                    "auto"
+            },
+            onComplete: () => {
+                projectImages.forEach(
+                    (
+                        image,
+                        imageIndex
+                    ) => {
+                        const isCurrent =
+                            imageIndex ===
+                            index;
+                        image.classList.toggle(
+                            "active",
+                            isCurrent
+                        );
+                        gsap.set(
+                            image,
+                            {
+                                autoAlpha:
+                                    isCurrent
+                                        ? 1
+                                        : 0,
+                                scale:
+                                    isCurrent
+                                        ? 1
+                                        : 1.012,
+                                zIndex:
+                                    isCurrent
+                                        ? 2
+                                        : 1
+                            }
+                        );
+                    }
+                );
+                projectImageTransition =
+                    null;
+            }
+        });
+        if (currentImage) {
+        projectImageTransition.to(
+            currentImage,
+            {
+                autoAlpha: 0,
+                scale: 0.994,
+                duration: 0.38,
+                ease:
+                    "power2.inOut"
+            },
+            0
+        );
+    }
+    projectImageTransition.to(
+        nextImage,
+        {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.48,
+            ease:
+                "power3.out"
+        },
+        0.08
+    );
+    visibleProjectImageIndex =
+        index;
+}
 function getListY(index) {
     const item = names[index];
     const itemCenter =
