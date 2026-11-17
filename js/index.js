@@ -1756,3 +1756,96 @@ if (contactRail) {
             }
     });
 }
+const emailButton =
+    document.querySelector(
+        ".contact-email-button"
+    );
+const emailPopover =
+    document.querySelector(
+        ".contact-email-popover"
+    );
+const emailCopyButton =
+    document.querySelector(
+        ".contact-email-copy"
+    );
+if (
+    emailButton &&
+    emailPopover
+) {
+    emailButton.addEventListener(
+        "click",
+        (event) => {
+            event.stopPropagation();
+            const isOpen =
+                emailPopover
+                    .classList
+                    .toggle(
+                        "is-open"
+                    );
+            emailButton
+                .setAttribute(
+                    "aria-expanded",
+                    String(isOpen)
+                );
+            emailPopover
+                .setAttribute(
+                    "aria-hidden",
+                    String(!isOpen)
+                );
+        }
+    );
+    document.addEventListener(
+        "click",
+        (event) => {
+            if (
+                !emailPopover
+                    .contains(
+                        event.target
+                    ) &&
+                !emailButton
+                    .contains(
+                        event.target
+                    )
+            ) {
+                emailPopover
+                    .classList
+                    .remove(
+                        "is-open"
+                    );
+                emailButton
+                    .setAttribute(
+                        "aria-expanded",
+                        "false"
+                    );
+                emailPopover
+                    .setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+            }
+        }
+    );
+}
+if (emailCopyButton) {
+    emailCopyButton.addEventListener(
+        "click",
+        async () => {
+            await navigator
+                .clipboard
+                .writeText(
+                    "maryzhigalskaya@gmail.com"
+                );
+            emailCopyButton
+                .textContent =
+                    "Copied";
+            setTimeout(
+                () => {
+                    emailCopyButton
+                        .textContent =
+                            "Copy";
+                },
+                1400
+            );
+        }
+    );
+}

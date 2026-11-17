@@ -3804,6 +3804,91 @@ body {
       -50%
     );
 }
+.contact-rail-email {
+  position: relative;
+}
+.contact-email-button {
+  font-family: inherit;
+  cursor: pointer;
+}
+.contact-email-popover {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 12px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px 9px 13px;
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.14);
+  border-radius: 24px;
+  background:
+    rgba(10, 10, 10, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  opacity: 0;
+  visibility: hidden;
+  transform:
+    translate(
+      8px,
+      -50%
+    );
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s ease,
+    visibility 0.25s ease;
+}
+.contact-email-popover.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform:
+    translate(
+      0,
+      -50%
+    );
+  pointer-events: auto;
+}
+.contact-email-address {
+  color: #ffffff;
+  font-family:
+    "General Sans",
+    system-ui,
+    sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.contact-email-address:hover {
+  opacity: 0.7;
+}
+.contact-email-copy {
+  padding: 5px 8px;
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.16);
+  border-radius: 14px;
+  background: transparent;
+  color: #9d9d9d;
+  font-family:
+    "General Sans",
+    system-ui,
+    sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+.contact-email-copy:hover {
+  color: #ffffff;
+  border-color:
+    rgba(255, 255, 255, 0.4);
+}
+
 @media
   (min-width: 700px)
   and (max-width: 1366px) {
