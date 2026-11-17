@@ -1706,3 +1706,53 @@ if (
     }
 );
 }
+const contactRail =
+    document.querySelector(
+        ".contact-rail"
+    );
+if (contactRail) {
+     ScrollTrigger.create({
+        trigger:
+            ".about-scroll",
+        start:
+            "top 85%",
+        onEnter:
+            () => {
+                contactRail
+                    .classList
+                    .add(
+                        "is-visible"
+                    );
+            },
+        onLeaveBack:
+            () => {
+                contactRail
+                    .classList
+                    .remove(
+                        "is-visible"
+                    );
+            }
+    });
+    ScrollTrigger.create({
+        trigger:
+            ".contact",
+        start:
+            "top 85%",
+        onEnter:
+            () => {
+                contactRail
+                    .classList
+                    .remove(
+                        "is-visible"
+                    );
+            },
+        onLeaveBack:
+            () => {
+                contactRail
+                    .classList
+                    .add(
+                        "is-visible"
+                    );
+            }
+    });
+}

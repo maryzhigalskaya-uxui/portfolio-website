@@ -3682,3 +3682,150 @@ body {
     line-height: 1.02;
   }
 }
+
+.contact-rail {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform: translateY(-50%);
+  z-index: 900;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s ease,
+    visibility 0.35s ease;
+}
+.contact-rail.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+.contact-rail-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background:
+    rgba(10, 10, 10, 0.88);
+  color: #ffffff;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition:
+    transform 0.3s
+      cubic-bezier(
+        0.2,
+        0.8,
+        0.2,
+        1
+      ),
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+.contact-rail-button svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: currentColor;
+  flex: none;
+}
+.contact-rail-button:hover {
+  transform:
+    scale(1.06);
+  border-color:
+    rgba(255, 255, 255, 0.48);
+  background:
+    rgba(22, 22, 22, 0.96);
+}
+.contact-rail-button:focus-visible {
+  outline:
+    1px solid #ffffff;
+  outline-offset: 4px;
+}
+.contact-rail-label {
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 10px);
+  padding:
+    7px
+    10px;
+  border:
+    1px solid
+    rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background:
+    rgba(10, 10, 10, 0.9);
+  color: #ffffff;
+  font-family:
+    "General Sans",
+    system-ui,
+    sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform:
+    translate(
+      6px,
+      -50%
+    );
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s
+      cubic-bezier(
+        0.2,
+        0.8,
+        0.2,
+        1
+      ),
+    visibility 0.25s ease;
+}
+.contact-rail-button:hover
+.contact-rail-label,
+.contact-rail-button:focus-visible
+.contact-rail-label {
+  opacity: 1;
+  visibility: visible;
+  transform:
+    translate(
+      0,
+      -50%
+    );
+}
+@media
+  (min-width: 700px)
+  and (max-width: 1366px) {
+  .contact-rail {
+    right: 14px;
+    gap: 9px;
+  }
+  .contact-rail-button {
+    width: 42px;
+    height: 42px;
+  }
+  .contact-rail-button svg {
+    width: 17px;
+    height: 17px;
+  }
+  .contact-rail-label {
+    display: none;
+  }
+}
+@media
+  (max-width: 699px) {
+  .contact-rail {
+    display: none;
+  }
+}
